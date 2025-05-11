@@ -16,6 +16,18 @@ android/app/src/debug/*
 android/app/src/profile/*
 android/app/src/release/*
 android/captures/
+android/key.properties
+# Ignore all key and certificate files
+*.keystore
+*.jks
+*.pem
+*.key
+*.p12
+*.crt
+*.cer
+*.der
+*.pfx
+*.asc
 .dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies
