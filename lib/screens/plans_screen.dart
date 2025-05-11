@@ -892,84 +892,87 @@ class _PlansScreenState extends State<PlansScreen> {
   void _showCreatePlanDialog(BuildContext context) {
     final TextEditingController _titleController = TextEditingController();
     final TextEditingController _durationController = TextEditingController();
-    final TextEditingController _descriptionController =
-        TextEditingController();
-    String _difficulty = 'Easy'; // Default value
-
+    final TextEditingController _descriptionController = TextEditingController();
+    // _difficulty will be local to the dialog state
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Create New Plan'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: _titleController,
-                decoration: const InputDecoration(labelText: 'Title'),
+        String _difficulty = 'Easy'; // Default value for this dialog
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return AlertDialog(
+              title: const Text('Create New Plan'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    controller: _titleController,
+                    decoration: const InputDecoration(labelText: 'Title'),
+                  ),
+                  TextField(
+                    controller: _durationController,
+                    decoration: const InputDecoration(labelText: 'Duration'),
+                  ),
+                  TextField(
+                    controller: _descriptionController,
+                    decoration: const InputDecoration(labelText: 'Description'),
+                  ),
+                  DropdownButton<String>(
+                    value: _difficulty,
+                    onChanged: (String? newValue) {
+                      if (newValue != null) {
+                        setState(() {
+                          _difficulty = newValue; // Update the difficulty
+                        });
+                      }
+                    },
+                    items: <String>['Easy', 'Medium', 'Hard']
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
+                ],
               ),
-              TextField(
-                controller: _durationController,
-                decoration: const InputDecoration(labelText: 'Duration'),
-              ),
-              TextField(
-                controller: _descriptionController,
-                decoration: const InputDecoration(labelText: 'Description'),
-              ),
-              DropdownButton<String>(
-                value: _difficulty,
-                onChanged: (String? newValue) {
-                  if (newValue != null) {
-                    setState(() {
-                      _difficulty = newValue; // Update the difficulty
-                    });
-                  }
-                },
-                items: <String>['Easy', 'Medium', 'Hard']
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-              },
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                final newPlan = WorkoutPlan(
-                  title: _titleController.text,
-                  duration: _durationController.text,
-                  description: _descriptionController.text,
-                  difficulty: _difficulty,
-                  color: NeuConstants.primaryColor,
-                  icon: Icons.fitness_center,
-                  scheduledTasks: {
-                    'Monday': [],
-                    'Tuesday': [],
-                    'Wednesday': [],
-                    'Thursday': [],
-                    'Friday': [],
-                    'Saturday': [],
-                    'Sunday': [],
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(); // Close the dialog
                   },
-                );
-                setState(() {
-                  _plans.add(newPlan);
-                });
-                _savePlans();
-                Navigator.of(context).pop(); // Close the dialog
-              },
-              child: const Text('Create'),
-            ),
-          ],
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    final newPlan = WorkoutPlan(
+                      title: _titleController.text,
+                      duration: _durationController.text,
+                      description: _descriptionController.text,
+                      difficulty: _difficulty,
+                      color: NeuConstants.primaryColor,
+                      icon: Icons.fitness_center,
+                      scheduledTasks: {
+                        'Monday': [],
+                        'Tuesday': [],
+                        'Wednesday': [],
+                        'Thursday': [],
+                        'Friday': [],
+                        'Saturday': [],
+                        'Sunday': [],
+                      },
+                    );
+                    setState(() {
+                      _plans.add(newPlan);
+                    });
+                    _savePlans();
+                    Navigator.of(context).pop(); // Close the dialog
+                  },
+                  child: const Text('Create'),
+                ),
+              ],
+            );
+          },
         );
       },
     );
@@ -1111,4 +1114,3 @@ class AboutPage extends StatelessWidget {
     );
   }
 }
-
