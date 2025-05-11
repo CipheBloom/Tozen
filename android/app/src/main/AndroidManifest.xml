@@ -3,6 +3,7 @@
         android:label="Tozen"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        <meta-data android:name="io.flutter.embedding.engine.renderer" android:value="skia" />
         <activity
             android:name=".MainActivity"
             android:exported="true"

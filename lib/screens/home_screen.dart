@@ -3,9 +3,30 @@ import '../constants/neu_constants.dart';
 import 'workout_screen.dart';
 import 'todo_screen.dart';
 import 'plans_screen.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  String _version = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadVersion();
+  }
+
+  Future<void> _loadVersion() async {
+    final info = await PackageInfo.fromPlatform();
+    setState(() {
+      _version = info.version;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -152,7 +173,7 @@ class HomeScreen extends StatelessWidget {
               decoration: NeuConstants.neuBrutalismBoxDecoration(
                 color: Colors.white,
               ),
-              child: const Column(
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
@@ -163,7 +184,7 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 8),
-                  Text('Version: 1.0.0'),
+                  Text('Version: $_version'),
                   SizedBox(height: 8),
                   Text('Developed by: CipheBloom'),
                   SizedBox(height: 8),

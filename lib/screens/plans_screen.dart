@@ -889,61 +889,61 @@ class _PlansScreenState extends State<PlansScreen> {
     });
   }
 
-  void _showCreatePlanDialog(BuildContext context) {
+  Future<WorkoutPlan?> _showCreatePlanDialog(BuildContext context) async {
     final TextEditingController _titleController = TextEditingController();
     final TextEditingController _durationController = TextEditingController();
     final TextEditingController _descriptionController = TextEditingController();
     // _difficulty will be local to the dialog state
-    showDialog(
+    return await showDialog<WorkoutPlan>(
       context: context,
       builder: (BuildContext context) {
         String _difficulty = 'Easy'; // Default value for this dialog
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
             return AlertDialog(
-              title: const Text('Create New Plan'),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextField(
-                    controller: _titleController,
-                    decoration: const InputDecoration(labelText: 'Title'),
-                  ),
-                  TextField(
-                    controller: _durationController,
-                    decoration: const InputDecoration(labelText: 'Duration'),
-                  ),
-                  TextField(
-                    controller: _descriptionController,
-                    decoration: const InputDecoration(labelText: 'Description'),
-                  ),
-                  DropdownButton<String>(
-                    value: _difficulty,
-                    onChanged: (String? newValue) {
-                      if (newValue != null) {
+              title: const Text('Create Plan'),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextField(
+                      controller: _titleController,
+                      decoration: const InputDecoration(labelText: 'Title'),
+                    ),
+                    TextField(
+                      controller: _durationController,
+                      decoration: const InputDecoration(labelText: 'Duration'),
+                    ),
+                    TextField(
+                      controller: _descriptionController,
+                      decoration: const InputDecoration(labelText: 'Description'),
+                    ),
+                    DropdownButton<String>(
+                      value: _difficulty,
+                      onChanged: (String? newValue) {
                         setState(() {
-                          _difficulty = newValue; // Update the difficulty
+                          _difficulty = newValue!;
                         });
-                      }
-                    },
-                    items: <String>['Easy', 'Medium', 'Hard']
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                  ),
-                ],
+                      },
+                      items: <String>['Easy', 'Medium', 'Hard']
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
               ),
               actions: [
                 TextButton(
                   onPressed: () {
-                    Navigator.of(context).pop(); // Close the dialog
+                    Navigator.of(context).pop();
                   },
                   child: const Text('Cancel'),
                 ),
-                TextButton(
+                ElevatedButton(
                   onPressed: () {
                     final newPlan = WorkoutPlan(
                       title: _titleController.text,
@@ -962,11 +962,7 @@ class _PlansScreenState extends State<PlansScreen> {
                         'Sunday': [],
                       },
                     );
-                    setState(() {
-                      _plans.add(newPlan);
-                    });
-                    _savePlans();
-                    Navigator.of(context).pop(); // Close the dialog
+                    Navigator.of(context).pop(newPlan);
                   },
                   child: const Text('Create'),
                 ),
@@ -1055,7 +1051,15 @@ class _PlansScreenState extends State<PlansScreen> {
                 ),
                 const SizedBox(height: 8),
                 ElevatedButton.icon(
-                  onPressed: () => _showCreatePlanDialog(context),
+                  onPressed: () async {
+                    final newPlan = await _showCreatePlanDialog(context);
+                    if (newPlan != null) {
+                      setState(() {
+                        _plans.add(newPlan);
+                      });
+                      _savePlans();
+                    }
+                  },
                   icon: const Icon(Icons.add),
                   label: const Text('NEW PLAN'),
                   style: NeuConstants.neuBrutalismButtonStyle(
